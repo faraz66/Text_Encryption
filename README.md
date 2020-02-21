@@ -19,7 +19,8 @@ We encrypt the message "KHAN", as follows:DATG
 **1.Reverse Transposition:**
 
  Here the Plain-text is just Reversed to generate the cipher text 
- ex:  
+ 
+ example:  
  plain-text: Hello
  
  cipher-text: olleH
