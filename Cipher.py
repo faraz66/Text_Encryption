@@ -54,26 +54,40 @@ def shift(string):
     ascii_list =[]
     print('\n[SHIFT CIPHER]')
     key = int(input("Enter The Key: "))  # getting the key
-    for i in string:  # converting the characters to 0-25
-        # using ord to get ascii values, subtract 65 to get values b/w 0-25
-        ascii_list.append(ord(i)-65)  # add to the list we made
-    # covert to np array and add key, the mod 26
+    for i in string:  # converting the characters to 0-255
+        # using ord to get ascii values
+        ascii_list.append(ord(i))  # -65)  # add to the list we made
+    # covert to np array and add key, the mod 256
     # using numpy because it save you from manually coding
-    ascii_list = (np.array(ascii_list) + key) % 26
+    ascii_list = (np.array(ascii_list) + key) % 256
 
-    charlist = []  # list for storing chars
+    char_list = []  # list for storing chars
     for i in ascii_list:
         # chr to get char from ascii value
-        # add 65 since we subtracted it before
-        charlist.append(chr(i+65))
+        char_list.append(chr(i))
 
     # logic from converting list to string
-    cipher = ''
-    for char in charlist:
-        cipher += char
+    cipher_text = ''
+    for char in char_list:
+        cipher_text += char
 
-    print(f'[RESULT OF SHIFT]: {cipher}')
-    return cipher, key  # returning results
+    print(f'[RESULT OF SHIFT]: {cipher_text}')
+    return cipher_text, key  # returning results
+
+
+# Decryption function for shift cipher
+def shift_decrypt(ciphered_text, key):
+    ascii_list = []
+    for i in ciphered_text:  # converting the characters to 0-255
+        # using ord to get ascii values
+        ascii_list.append(ord(i))  # add to the list we made
+    # covert to np array and add 256, subtract key, then mod 256
+    ascii_list = (np.array(ascii_list) + 256 - key) % 256
+    # loop for converting the numeric values to their characters
+    text = ''
+    for char in ascii_list:
+        text += chr(char)
+    return text
 
 
 # main function in python
@@ -89,7 +103,7 @@ if __name__ == "__main__":
     cipher, shiftKey = shift(message)
     cipher, transKey = transposition(cipher)
     # open the file, using f as file pointer in write mode
-    f = open('data.txt', 'w')
+    f = open('data.txt', 'w', encoding='utf-8')
     f.write(cipher)  # write to file
     print(f'\n[CIPHERED TEXT] {cipher}')
     f.close()  # close the file
@@ -102,9 +116,15 @@ if __name__ == "__main__":
     if decrypt == 0:
         exit(0)  # if no, then exit
     # else open the file in read mode
-    f = open('data.txt', 'r')
+    f = open('data.txt', 'r', encoding='utf-8')
     cipher = str(f.readline())  # readline from the file
     f.close()  # close file pointer
     # call the decryption function for transposition
     plain_text = transposition_decrypt(cipher, transKey)
-    print(plain_text)
+    # call the decryption function for shift cipher
+    plain_text = shift_decrypt(plain_text, shiftKey)
+    # print the deciphered text
+    print(f'\n[DECIPHERED TEXT] {plain_text}')
+    f = open('data.txt', 'w')
+    f.write(plain_text)
+    f.close()
